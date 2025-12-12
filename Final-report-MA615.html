@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Khang-Trang Nguyen">
+
+<title>Lemurs in Madagascar: Data Cleaning, Exploration and Webpage</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Final-report-MA615_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Final-report-MA615_files/libs/quarto-html/quarto.js"></script>
+<script src="Final-report-MA615_files/libs/quarto-html/popper.min.js"></script>
+<script src="Final-report-MA615_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Final-report-MA615_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Final-report-MA615_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Final-report-MA615_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Final-report-MA615_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Final-report-MA615_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Final-report-MA615_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="Final-report-MA615_files/libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="Final-report-MA615_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="Final-report-MA615_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="Final-report-MA615_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="Final-report-MA615_files/libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="Final-report-MA615_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="Final-report-MA615_files/libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="Final-report-MA615_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="Final-report-MA615_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="Final-report-MA615_files/libs/leaflet-binding-2.2.3/leaflet.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lemurs in Madagascar: Data Cleaning, Exploration and Webpage</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Khang-Trang Nguyen </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level4">
+<h4 class="anchored" data-anchor-id="introduction">Introduction</h4>
+<p>This report examines lemurs, the reasons they are classified as endangered species, and the unique ecosystem they inhabit on the island of Madagascar. Madagascar is globally recognized for its lemurs—distinctive primates with physical features resembling a blend of cat, squirrel, and dog. Found exclusively on this island, lemurs exhibit extraordinary behaviors, such as the haunting, whale-like songs of the indri and the graceful, dance-like leaps of the sifaka.</p>
+<p>Over the past sixty years, Madagascar has lost nearly 44% of its forest cover, primarily due to slash-and-burn agriculture (known locally as <em>tavy</em>) and the widespread production of charcoal. This rapid deforestation has led to extensive habitat loss and fragmentation. Today, nearly half of the remaining forest lies within 100 meters (approximately 300 feet) of an exposed edge, leaving wildlife vulnerable to disturbance and diminishing overall ecosystem stability. Additional pressures—such as illegal hunting and the capture of animals for the pet trade—further accelerate biodiversity decline.</p>
+<p>These threats have placed Madagascar’s wildlife, particularly its lemurs, under severe conservation stress. According to the International Union for Conservation of Nature (IUCN), an estimated 95% of lemur species are now threatened with extinction, making them the most endangered group of mammals in the world. The island’s biodiversity crisis has worsened significantly in recent years.</p>
+<p>The purpose of this report and its accompanying webpage is to increase public awareness about the critical endangerment of lemurs and to encourage meaningful action to support their protection and the preservation of Madagascar’s fragile ecosystems.</p>
+</section>
+<section id="step-1-read-csv-file" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-read-csv-file">Step 1: Read CSV file</h4>
+<p>The dataset was retrieved from the website Pandoradata.erth. The CSV fiile name is supplementary-table-s1-3.csv.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearth)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearthdata)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridisLite)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Read lemur data</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>lem_raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"supplementary-table-s1-3.csv"</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter variables so it narrows down to only Lemur (not other animals)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>lemurs <span class="ot">&lt;-</span> lem_raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    Kingdom <span class="sc">==</span> <span class="st">"Animalia"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    Class <span class="sc">==</span> <span class="st">"Mammalia"</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    Order <span class="sc">==</span> <span class="st">"Primates"</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Latitude), <span class="sc">!</span><span class="fu">is.na</span>(Longitude))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-nas-imputation" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-nas-imputation">Step 2: NAs imputation</h4>
+<p>Because the <em>Body Mass</em> variable contained a large number of missing values, imputation was performed separately for each species. Since body mass varies widely across species—and each species has its own biologically appropriate range—using a single overall imputation method would be inappropriate and potentially misleading. Instead, species-specific imputation ensures that the filled values reflect realistic physiological ranges.</p>
+<p>For several species in the dataset, all recorded body mass values were missing. In these cases, verified body mass ranges were obtained from reputable external sources, and the missing values were imputed by randomly drawing numbers within the documented range for that species. This approach preserves biological plausibility while allowing these species to be retained in the analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Because variable "Body Mass" has a lot of NAs, I do imputation by species.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Each species has their own range of body mass so we cannot do mass imputation but imputation #by species.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># There are some species that their entire body mass values were NAs; therefore, I googled the range of their body mass and impute NAs by drawing random number within that range.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Body-mass ranges for species with all NAs</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mass_ranges <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Genus_Species,              <span class="sc">~</span>min_mass, <span class="sc">~</span>max_mass,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Avahi laniger"</span>,             <span class="fl">0.6</span>,       <span class="fl">1.3</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cheirogaleus grovesi"</span>,      <span class="fl">0.4</span>,       <span class="fl">0.41</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cheirogaleus medius"</span>,       <span class="fl">0.12</span>,      <span class="fl">0.27</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Eulemur rufifrons"</span>,         <span class="fl">2.2</span>,       <span class="fl">2.3</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Hapalemur griseus"</span>,         <span class="fl">0.7</span>,       <span class="fl">1.0</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Hapalemur meridionalis"</span>,    <span class="fl">0.965</span>,     <span class="fl">1.179</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Indri indri"</span>,               <span class="fl">6.0</span>,       <span class="fl">9.5</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lemur catta"</span>,               <span class="fl">2.2</span>,       <span class="fl">3.5</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lepilemur petteri"</span>,         <span class="fl">0.5</span>,       <span class="fl">0.9</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lepilemur ruficaudatus"</span>,    <span class="fl">0.6</span>,       <span class="fl">0.9</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Microcebus"</span>,                <span class="fl">0.03</span>,      <span class="fl">0.12</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Microcebus cf. murinus"</span>,    <span class="fl">0.058</span>,     <span class="fl">0.067</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mirza coquereli"</span>,           <span class="fl">0.29</span>,      <span class="fl">0.32</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Phaner pallescens"</span>,         <span class="fl">0.3</span>,       <span class="fl">0.5</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Propithecus diadema"</span>,       <span class="fl">5.0</span>,       <span class="fl">7.0</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Propithecus verreauxi"</span>,     <span class="fl">2.5</span>,       <span class="fl">4.0</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Varecia rubra"</span>,             <span class="fl">3.3</span>,       <span class="fl">4.1</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Impute &amp; clean</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>lemurs_imputed <span class="ot">&lt;-</span> lemurs <span class="sc">%&gt;%</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Body_Mass =</span> <span class="fu">as.numeric</span>(Body_Mass)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Genus_Species) <span class="sc">%&gt;%</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">Body_Mass =</span> <span class="fu">if_else</span>(</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(Body_Mass),</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">median</span>(Body_Mass, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      Body_Mass</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mass_ranges, <span class="at">by =</span> <span class="st">"Genus_Species"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">Body_Mass =</span> <span class="fu">if_else</span>(</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(Body_Mass) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(min_mass),</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">runif</span>(<span class="fu">n</span>(), min_mass, max_mass),</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>      Body_Mass</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>min_mass, <span class="sc">-</span>max_mass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-geospatial-map" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-geospatial-map">Step 3: Geospatial map</h4>
+<p>First, the dataset is cleaned to ensure that all text fields use a consistent character encoding. All character-type columns in the <code>lemurs_imputed</code> data frame are converted to UTF-8 using <code>iconv()</code>. This helps prevent problems with special characters (e.g., accents, symbols) when displaying or mapping the data.</p>
+<p>Next, the data are aggregated to create a site-level summary suitable for mapping. The code groups the records by:</p>
+<ul>
+<li><p><strong>Genus_Species</strong></p></li>
+<li><p><strong>Site_Name</strong></p></li>
+<li><p><strong>Locality</strong></p></li>
+<li><p><strong>Latitude</strong></p></li>
+<li><p><strong>Longitude</strong></p></li>
+</ul>
+<p>Within each group (i.e., each unique species at a specific location), it:</p>
+<ul>
+<li><p>Counts the number of individual records and stores this as <code>n_individuals</code>.</p></li>
+<li><p>Extracts the first recorded elevation value for that group and saves it as <code>Elevation</code>.</p></li>
+</ul>
+<p>This produces a new dataset, <code>lemurs_counts</code>, in which each row represents a unique combination of species and site, with an associated count of individuals and elevation.</p>
+<p>The data are then converted into a spatial object using <code>st_as_sf()</code>. The longitude and latitude columns are used as spatial coordinates, and the coordinate reference system (CRS) is set to EPSG:4326, which corresponds to standard geographic coordinates (WGS84). This spatial object, <code>lemurs_counts_sf</code>, is what will be displayed on the map.</p>
+<p>To provide geographic context, the code also downloads a polygon representing the outline of Madagascar using <code>ne_countries()</code> from the <strong>rnaturalearth</strong> package. This polygon (<code>madagascar</code>) will be used as the base layer beneath the lemur points.</p>
+<p>The next step is to define a color scheme for the map. The code:</p>
+<ol type="1">
+<li><p>Extracts all unique species names from <code>Genus_Species</code>.</p></li>
+<li><p>Counts how many species are present.</p></li>
+<li><p>Generates a color palette with one distinct color per species using <code>colorRampPalette()</code> and the <code>"Paired"</code> palette from <strong>RColorBrewer</strong>.</p></li>
+<li><p>Creates a <code>colorFactor</code> object, <code>pal</code>, that assigns a specific color to each species.</p></li>
+</ol>
+<p>Finally, an interactive map is created using <strong>leaflet</strong>:</p>
+<ul>
+<li><p>A base tile layer is added with <code>addTiles()</code>.</p></li>
+<li><p>The outline of Madagascar is overlaid using <code>addPolygons()</code>, shown as an unfilled polygon with a thin border.</p></li>
+<li><p>Lemur locations are plotted using <code>addCircleMarkers()</code>, where:</p>
+<ul>
+<li><p>Each point corresponds to a species at a specific site.</p></li>
+<li><p>The <strong>radius</strong> of each circle is scaled by the number of individuals (<code>n_individuals</code>), using a log transformation and a minimum size, so that sites with more records appear as larger circles.</p></li>
+<li><p>The <strong>color</strong> of each point is determined by the species, using the previously defined palette <code>pal</code>.</p></li>
+<li><p>A <strong>popup</strong> appears when a user clicks on a point, displaying:</p>
+<p>(1) Species name</p>
+<p>(2) Site name</p>
+<p>(3) Locality</p>
+<p>(4) Elevation (in meters)</p>
+<p>(5) Number of individuals recorded at that site</p></li>
+</ul>
+<p>A legend is added in the bottom-right corner of the map using <code>addLegend()</code>. This legend shows the color associated with each lemur species, helping viewers interpret the map.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix encoding for character columns</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>lemurs_imputed <span class="ot">&lt;-</span> lemurs_imputed <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">iconv</span>(.x, <span class="at">from =</span> <span class="st">""</span>, <span class="at">to =</span> <span class="st">"UTF-8"</span>)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate for map</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>lemurs_counts <span class="ot">&lt;-</span> lemurs_imputed <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    Genus_Species,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    Site_Name,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    Locality,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    Latitude,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    Longitude</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_individuals =</span> <span class="fu">n</span>(),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">Elevation     =</span> <span class="fu">first</span>(Elevation),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># sf object</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>lemurs_counts_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  lemurs_counts,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"Longitude"</span>, <span class="st">"Latitude"</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Madagascar polygon</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>madagascar <span class="ot">&lt;-</span> <span class="fu">ne_countries</span>(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"medium"</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="st">"Madagascar"</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">returnclass =</span> <span class="st">"sf"</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Color palette by species</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>species_levels <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(lemurs_counts_sf<span class="sc">$</span>Genus_Species))</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>n_species <span class="ot">&lt;-</span> <span class="fu">length</span>(species_levels)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>pal_vec <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">brewer.pal</span>(<span class="dv">12</span>, <span class="st">"Paired"</span>))(n_species)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>pal <span class="ot">&lt;-</span> <span class="fu">colorFactor</span>(</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> pal_vec,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">domain  =</span> species_levels</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- THIS PART ACTUALLY DRAWS THE MAP ----</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>(lemurs_counts_sf) <span class="sc">|&gt;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addPolygons</span>(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> madagascar,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight =</span> <span class="dv">1</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="sc">~</span><span class="fu">pmax</span>(<span class="dv">3</span>, <span class="fu">log10</span>(n_individuals <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">4</span>),</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">fillOpacity =</span> <span class="fl">0.8</span>,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="sc">~</span><span class="fu">pal</span>(Genus_Species),</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste0</span>(</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>      <span class="st">"&lt;b&gt;"</span>, Genus_Species, <span class="st">"&lt;/b&gt;&lt;br&gt;"</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Site: "</span>, Site_Name, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Locality: "</span>, Locality, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Elevation: "</span>, Elevation, <span class="st">" m&lt;br&gt;"</span>,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Individuals: "</span>, n_individuals</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addLegend</span>(</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"bottomright"</span>,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">pal    =</span> pal,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="sc">~</span>Genus_Species,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">title  =</span> <span class="st">"Lemur species"</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">opacity =</span> <span class="dv">1</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-3893a2d8eda0410349e0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-3893a2d8eda0410349e0">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addPolygons","args":[[[[{"lng":[49.53828125000001,49.58417968750001,49.63779296875001,49.80498046875002,49.87646484375,49.9375,49.96718750000002,50.07343750000001,50.173828125,50.20458984375,50.2353515625,50.3134765625,50.44130859375002,50.48271484375002,50.40458984375002,50.29150390625,50.26230468750001,50.208984375,50.18496093750002,50.09443359375001,50.02041015625002,49.92656250000002,49.892578125,49.85332031250002,49.74375000000001,49.66435546875002,49.64990234375,49.6669921875,49.69707031250002,49.71044921875,49.71279296875002,49.74228515625001,49.78593750000002,49.8310546875,49.83906250000001,49.81132812500002,49.73398437500001,49.73857421875002,49.76718750000001,49.73974609375,49.63691406250001,49.59521484375,49.53955078125,49.44931640625001,49.43710937500001,49.49365234375,49.47783203125002,49.36289062500001,49.296875,49.20332031250001,49.06005859375,48.91806640625001,48.79746093750001,48.70830078125002,48.60703125000001,48.46855468750002,48.35078125000001,48.17587890625001,47.93447265625002,47.90839843750001,47.85830078125002,47.80410156250002,47.73945312500001,47.60410156250001,47.58867187500002,47.55800781250002,47.42763671875002,47.37255859375,47.33359375000001,47.31171875000001,47.27285156250002,47.17734375000001,47.03496093750002,46.93818359375001,46.728515625,46.62226562500001,46.38671875,46.15869140625,45.9208984375,45.69218750000002,45.60458984375001,45.50800781250001,45.20576171875001,45.115234375,44.81289062500002,44.69580078125,44.47382812500001,44.40673828125,44.34589843750001,44.25615234375002,44.078125,44.03535156250001,44.00830078125,43.98984375000001,43.94375000000002,43.90957031250002,43.8515625,43.6875,43.67001953125001,43.65683593750001,43.662109375,43.64609375000001,43.66474609375001,43.72226562500001,43.69873046875,43.63759765625002,43.61464843750002,43.56953125000001,43.39785156250002,43.35751953125001,43.32958984375,43.26484375000001,43.25712890625002,43.2666015625,43.29052734375,43.33222656250001,43.34267578125002,43.36972656250001,43.41054687500002,43.43779296875002,43.50185546875002,43.58310546875001,43.70361328125,43.80019531250002,43.85566406250001,43.9111328125,44.06308593750001,44.1171875,44.23964843750002,44.34814453125,44.38105468750001,44.40468750000002,44.43222656250001,44.45292968750002,44.44882812500001,44.38652343750002,44.23876953125,44.23398437500001,44.24570312500001,44.23310546875001,44.1787109375,44.10878906250002,44.0400390625,44.00664062500002,44.013671875,43.99355468750002,43.94355468750001,43.97939453125002,44.42138671875,44.43574218750001,44.41796875,44.42705078125002,44.44248046875001,44.47617187500001,44.55185546875001,44.9091796875,44.955078125,45.04423828125002,45.16679687500002,45.22285156250001,45.27128906250002,45.30234375000001,45.34218750000002,45.486328125,45.54179687500002,45.59824218750001,45.62470703125001,45.64052734375002,45.66152343750002,45.7001953125,45.88593750000001,46.00429687500002,46.15751953125002,46.19052734375001,46.31406250000001,46.3515625,46.39960937500001,46.44160156250001,46.34130859375,46.326171875,46.33144531250002,46.38515625000002,46.47509765625,46.67470703125002,46.88203125000001,46.94228515625002,46.99326171875001,47.03232421875001,47.02744140625001,47.060546875,47.09921875000001,47.13339843750001,47.13515625000002,47.10732421875002,47.09375,47.09257812500002,47.19765625000002,47.28046875000001,47.31875000000002,47.35195312500002,47.43906250000001,47.46474609375002,47.48505859375001,47.49638671875002,47.47402343750002,47.44208984375001,47.42919921875,47.47832031250002,47.52470703125002,47.59257812500002,47.67001953125001,47.71601562500001,47.77402343750001,47.87041015625002,47.96416015625002,47.8115234375,47.77333984375002,47.95517578125001,47.95693359375002,47.98320312500002,47.99550781250002,47.9013671875,47.88359375000002,47.89599609375,47.94101562500001,47.98183593750002,48.03984375000002,48.0859375,48.18710937500001,48.25527343750002,48.33769531250002,48.40507812500002,48.50644531250001,48.62138671875002,48.79648437500001,48.91035156250001,48.91943359375,48.89423828125001,48.85380859375002,48.78632812500001,48.80390625000001,48.89960937500001,48.93173828125001,49.03574218750001,49.20703125,49.26347656250002,49.31210937500001,49.33017578125001,49.36396484375001,49.47978515625002,49.53828125000001],"lat":[-12.43212890625,-12.53671875000001,-12.63710937500001,-12.8796875,-12.97304687500001,-13.072265625,-13.27021484375001,-13.5779296875,-14.04023437500001,-14.514453125,-14.73203125000001,-14.93681640625,-15.14931640625001,-15.38564453125001,-15.62910156250001,-15.85849609375001,-15.90156250000001,-15.96044921875,-15.9578125,-15.89863281250001,-15.8017578125,-15.57353515625,-15.45771484375001,-15.439453125,-15.44951171875,-15.52158203125001,-15.56699218750001,-15.69570312500001,-15.81142578125001,-15.92890625000001,-16.07675781250001,-16.12148437500001,-16.15908203125001,-16.255859375,-16.48652343750001,-16.60302734375,-16.70302734375001,-16.75839843750001,-16.81513671875001,-16.8494140625,-16.89287109375,-16.93115234375,-17.03291015625001,-17.24062500000001,-17.3466796875,-17.66953125000001,-17.89853515625001,-18.33632812500001,-18.54404296875001,-18.79228515625,-19.11962890625,-19.53046875000001,-19.95322265625001,-20.20732421875,-20.45751953125,-20.90000000000001,-21.34902343750001,-21.84306640625,-22.39394531250001,-22.4658203125,-22.74726562500001,-22.99150390625,-23.2333984375,-23.63310546875,-23.75634765625,-23.87460937500001,-24.12519531250001,-24.21845703125001,-24.31757812500001,-24.4431640625,-24.56435546875001,-24.78720703125001,-24.97900390625,-25.04873046875001,-25.14990234375,-25.17041015625,-25.17275390625001,-25.23037109375001,-25.34130859375,-25.46845703125001,-25.52871093750001,-25.56318359375001,-25.57050781250001,-25.54306640625001,-25.33417968750001,-25.29970703125001,-25.27109375000001,-25.25332031250001,-25.22607421875,-25.11689453125001,-25.02460937500001,-24.99570312500001,-24.93203125000001,-24.86347656250001,-24.78671875000001,-24.640625,-24.53837890625,-24.35791015625,-24.30029296875,-24.10878906250001,-23.97919921875001,-23.74189453125001,-23.63027343750001,-23.52968750000001,-23.4208984375,-23.30654296875001,-23.18818359375001,-23.08046875000001,-22.88632812500001,-22.7908203125,-22.69189453125,-22.38359375,-22.2763671875,-22.04931640625,-21.93251953125001,-21.85117187500001,-21.79042968750001,-21.73828125,-21.69648437500001,-21.64667968750001,-21.3564453125,-21.2919921875,-21.25498046875001,-21.17919921875,-21.07685546875001,-20.86582031250001,-20.65625,-20.54609375000001,-20.3796875,-20.1455078125,-20.03515625,-19.92207031250001,-19.67421875000001,-19.55087890625001,-19.4287109375,-19.30312500000001,-19.0751953125,-19.03261718750001,-18.86318359375001,-18.74062500000001,-18.61855468750001,-18.50351562500001,-18.28847656250001,-17.93300781250001,-17.8044921875,-17.69033203125001,-17.58144531250001,-17.3916015625,-16.70263671875,-16.62148437500001,-16.41132812500001,-16.2890625,-16.24375000000001,-16.21728515625,-16.20449218750001,-16.17451171875001,-16.1533203125,-16.09511718750001,-15.98281250000001,-15.95048828125,-15.96230468750001,-16.01044921875001,-16.03671875000001,-15.98583984375,-15.98427734375001,-15.99257812500001,-15.94580078125,-15.88310546875,-15.8388671875,-15.81376953125,-15.80009765625,-15.78212890625001,-15.73828125,-15.746875,-15.90458984375,-15.91816406250001,-15.924609375,-15.89589843750001,-15.81337890625001,-15.76669921875001,-15.713671875,-15.60009765625,-15.5134765625,-15.3818359375,-15.22958984375001,-15.21904296875,-15.2431640625,-15.42265625,-15.45224609375001,-15.45634765625,-15.43417968750001,-15.36171875000001,-15.3015625,-15.24384765625001,-15.19501953125001,-15.15009765625001,-15.04404296875001,-14.94267578125,-14.82177734375,-14.76611328125,-14.70332031250001,-14.71328125000001,-14.76435546875001,-14.818359375,-14.87197265625001,-14.92500000000001,-14.99570312500001,-15.00937500000001,-14.9921875,-14.8642578125,-14.74326171875001,-14.68037109375001,-14.63671875,-14.6455078125,-14.67255859375001,-14.54482421875001,-14.369921875,-14.06728515625001,-14.00429687500001,-13.98486328125,-13.96044921875,-13.858203125,-13.80751953125001,-13.73066406250001,-13.66240234375,-13.61464843750001,-13.59628906250001,-13.62255859375,-13.70654296875,-13.71933593750001,-13.638671875,-13.53798828125001,-13.46875,-13.42597656250001,-13.26748046875001,-12.93583984375,-12.83906250000001,-12.7216796875,-12.61015625,-12.47089843750001,-12.44003906250001,-12.45849609375,-12.43906250000001,-12.31582031250001,-12.07958984375,-12.08017578125001,-12.12392578125001,-12.18867187500001,-12.236328125,-12.3484375,-12.43212890625]}],[{"lng":[48.34218750000002,48.34355468750002,48.2119140625,48.19121093750002,48.25566406250002,48.26972656250001,48.30888671875002,48.35107421875,48.34218750000002],"lat":[-13.36386718750001,-13.400390625,-13.38525390625,-13.25996093750001,-13.25605468750001,-13.20458984375,-13.1982421875,-13.3095703125,-13.36386718750001]}],[{"lng":[49.93642578125002,49.82402343750002,49.85566406250001,49.98593750000001,50.02304687500001,49.93642578125002],"lat":[-16.90292968750001,-17.08652343750001,-16.93320312500001,-16.71240234375,-16.6953125,-16.90292968750001]}]]],null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":1,"opacity":0.5,"fill":false,"fillColor":"#03F","fillOpacity":0.2,"smoothFactor":1,"noClip":false},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[-23,-21.237,-21.312,-21.266,-21.294,-19.68,-19.689,-19.722,-19.724,-21.32,-21.312,-21.266,-21.294,-20.05,-19.68,-19.689,-20.05,-21.32,-19.716,-19.716,-19.689,-24.951,-19.735,-25.009,-25.503,-23.683,-23.65,-23.683,-20.05,-24.969,-24.969,-24.968,-24.968,-24.967,-24.964,-24.963,-24.963,-24.959,-20.05,-20.05,-24.821,-24.819,-24.819,-24.819,-24.819,-24.818,-24.818,-24.818,-24.818,-24.804,-24.795,-24.795,-24.946,-24.945,-24.945,-24.969,-24.968,-24.968,-24.968,-24.968,-24.967,-24.964,-24.964,-24.963,-24.963,-24.963,-24.963,-24.962,-24.962,-24.962,-24.962,-24.962,-24.961,-24.961,-24.96,-24.959,-24.959,-24.958,-24.958,-24.956,-24.956,-24.955,-24.955,-24.949,-24.948,-24.953,-24.842,-24.842,-24.841,-24.841,-24.84,-24.829,-24.828,-24.969,-24.967,-24.966,-24.964,-24.963,-24.962,-24.958,-24.956,-24.956,-24.956,-24.956,-24.956,-23.65,-23.68,-23.65,-23.65,-19.689,-19.724,-16.32,-24.963,-24.962,-24.961,-20.05,-20.05,-20.74,-16.32,-16.25,-21.32,-21.312,-21.266,-17.888,-20.05,-20.05,-19.735,-19.689,-19.689,-19.689,-19.689,-19.689,-19.724,-19.724,-25.009,-20.05,-23.683,-23.683,-23.65,-15.533,-15.672,-21.373,-21.294],[47.7,47.439,47.493,47.428,47.428,47.771,47.77,47.858,47.861,47.396,47.493,47.428,47.428,44.65,47.771,47.77,44.65,47.396,47.822,47.822,47.77,46.998,48.173,46.311,45.137,44.583,44.62,44.583,44.65,46.557,46.567,46.565,46.567,46.554,46.555,46.555,46.557,46.553,44.65,44.65,46.668,46.664,46.669,46.67,46.671,46.671,46.672,46.673,46.674,46.689,46.689,46.69,46.674,46.671,46.672,46.567,46.564,46.565,46.566,46.567,46.555,46.556,46.557,46.555,46.556,46.558,46.559,46.553,46.555,46.556,46.557,46.559,46.558,46.559,46.553,46.553,46.616,46.616,46.617,46.617,46.618,46.62,46.621,46.621,46.621,47.001,46.529,46.53,46.528,46.529,46.528,46.548,46.549,46.557,46.555,46.555,46.558,46.556,46.558,46.553,46.611,46.613,46.614,46.616,46.617,44.62,44.63,44.62,44.62,47.77,47.861,46.8,46.555,46.553,46.56,44.65,44.65,44.17,46.8,47.033,47.396,47.493,47.428,49.225,44.65,44.65,48.173,47.77,47.77,47.77,47.77,47.77,47.861,47.861,46.311,44.65,44.583,44.633,44.62,49.9,49.966,47.45,47.428],[3,3,3,3,3,4.704365036222725,4,3.816970037757299,5.591760034688151,3,3,3.380392160057027,3,5.788632125368877,4.455773409227347,6.176272177401103,4.816479930623699,3,3,3,3,3,3,3.112605001534575,3,6.020599913279624,3,4,4.3167249841905,3,3,3,3,3,3,3,3,3,7.355396362949021,7.717675702857171,3,3,3,3.112605001534575,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,3.816970037757299,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,7.676312369504296,8.794628347817691,8.196872090680726,6.125915668169021,4.455773409227347,7.141319340043069,3,3,3,8.051348898820688,8.084757196279753,6.451135426878942,7.169566757993016,7.797560026579651,3,3,7.676312369504296,5.849591991595824,4.3167249841905,3,3,3.612359947967774,3.380392160057027,3,3,3,3,4.165570740632901,3,5.446911344070371,3,3,3.816970037757299,3,4.584512142712952,6.492997161591602,4.704365036222725],null,null,{"interactive":true,"className":"","stroke":false,"color":["#A6CEE3","#A6CEE3","#A6CEE3","#A6CEE3","#A6CEE3","#6CA9CF","#6CA9CF","#6CA9CF","#6CA9CF","#3385BB","#3385BB","#3385BB","#3385BB","#4693A8","#84BF96","#84BF96","#A3D77F","#A3D77F","#6DBD57","#6DBD57","#6DBD57","#37A22F","#7F9D55","#D49B84","#D49B84","#D49B84","#D49B84","#F57C7C","#EB4647","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#F06C45","#F06C45","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FE8D19","#FE8D19","#F48829","#F48829","#F48829","#F48829","#F48829","#F48829","#F48829","#DE9E83","#DE9E83","#C6ADD3","#C6ADD3","#C6ADD3","#9D7BBA","#754AA0","#977899","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#F3E587","#F3E587","#F3E587","#F3E587","#F3E587","#D29F57","#D29F57","#B15928","#B15928"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["#A6CEE3","#A6CEE3","#A6CEE3","#A6CEE3","#A6CEE3","#6CA9CF","#6CA9CF","#6CA9CF","#6CA9CF","#3385BB","#3385BB","#3385BB","#3385BB","#4693A8","#84BF96","#84BF96","#A3D77F","#A3D77F","#6DBD57","#6DBD57","#6DBD57","#37A22F","#7F9D55","#D49B84","#D49B84","#D49B84","#D49B84","#F57C7C","#EB4647","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#E42622","#F06C45","#F06C45","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FBB268","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FDA848","#FE8D19","#FE8D19","#F48829","#F48829","#F48829","#F48829","#F48829","#F48829","#F48829","#DE9E83","#DE9E83","#C6ADD3","#C6ADD3","#C6ADD3","#9D7BBA","#754AA0","#977899","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#D6CA99","#F3E587","#F3E587","#F3E587","#F3E587","#F3E587","#D29F57","#D29F57","#B15928","#B15928"],"fillOpacity":0.8},null,null,["<b>Avahi laniger<\/b><br>Site: Manombo<br>Locality: <br>Elevation: 50 m<br>Individuals: 1","<b>Avahi laniger<\/b><br>Site: Ranomafana<br>Locality: Ambatolahy<br>Elevation: 1127 m<br>Individuals: 1","<b>Avahi laniger<\/b><br>Site: Ranomafana<br>Locality: Iambafo<br>Elevation: 760 m<br>Individuals: 3","<b>Avahi laniger<\/b><br>Site: Ranomafana<br>Locality: Talatakely<br>Elevation: 987 m<br>Individuals: 2","<b>Avahi laniger<\/b><br>Site: Ranomafana<br>Locality: Vatoharanana<br>Elevation: 1096 m<br>Individuals: 4","<b>Cheirogaleus crossleyi<\/b><br>Site: Tsinjoarivo<br>Locality: Andasivodihazo<br>Elevation: 1607 m<br>Individuals: 14","<b>Cheirogaleus crossleyi<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo and Andasivodihazo fragmented forest<br>Elevation: 1608 m<br>Individuals: 9","<b>Cheirogaleus crossleyi<\/b><br>Site: Tsinjoarivo<br>Locality: Vatateza<br>Elevation: 1394 m<br>Individuals: 8","<b>Cheirogaleus crossleyi<\/b><br>Site: Tsinjoarivo<br>Locality: Vatateza continuous forest<br>Elevation: 1394 m<br>Individuals: 24","<b>Cheirogaleus grovesi<\/b><br>Site: Ranomafana<br>Locality: <br>Elevation: 1221 m<br>Individuals: 1","<b>Cheirogaleus grovesi<\/b><br>Site: Ranomafana<br>Locality: Iambafo<br>Elevation: 760 m<br>Individuals: 3","<b>Cheirogaleus grovesi<\/b><br>Site: Ranomafana<br>Locality: Talatakely<br>Elevation: 987 m<br>Individuals: 6","<b>Cheirogaleus grovesi<\/b><br>Site: Ranomafana<br>Locality: Vatoharanana<br>Elevation: 1096 m<br>Individuals: 1","<b>Cheirogaleus medius<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 27","<b>Cheirogaleus sibreei<\/b><br>Site: Tsinjoarivo<br>Locality: Andasivodihazo<br>Elevation: 1607 m<br>Individuals: 12","<b>Cheirogaleus sibreei<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo and Andasivodihazo fragmented forest<br>Elevation: 1608 m<br>Individuals: 34","<b>Eulemur rufifrons<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 15","<b>Eulemur rufifrons<\/b><br>Site: Ranomafana<br>Locality: <br>Elevation: 1221 m<br>Individuals: 1","<b>Hapalemur griseus<\/b><br>Site: Tsinjoarivo<br>Locality: Ankadivory-Tavikely<br>Elevation: 1461 m<br>Individuals: 3","<b>Hapalemur griseus<\/b><br>Site: Tsinjoarivo<br>Locality: Ankadivory-West<br>Elevation: 1461 m<br>Individuals: 2","<b>Hapalemur griseus<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Andasivodihazo<br>Elevation: 1608 m<br>Individuals: 2","<b>Hapalemur meridionalis<\/b><br>Site: Mandena<br>Locality: <br>Elevation: 14 m<br>Individuals: 1","<b>Indri indri<\/b><br>Site: Eastern Madagascar<br>Locality: <br>Elevation: 646 m<br>Individuals: 1","<b>Lemur catta<\/b><br>Site: Berenty<br>Locality: <br>Elevation: 26 m<br>Individuals: 5","<b>Lemur catta<\/b><br>Site: Cap Sainte Marie<br>Locality: <br>Elevation: 165 m<br>Individuals: 1","<b>Lemur catta<\/b><br>Site: NA<br>Locality: <br>Elevation: 179 m<br>Individuals: 31","<b>Lemur catta<\/b><br>Site: NA<br>Locality: <br>Elevation: 134 m<br>Individuals: 1","<b>Lepilemur petteri<\/b><br>Site: NA<br>Locality: <br>Elevation: 179 m<br>Individuals: 9","<b>Lepilemur ruficaudatus<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 11","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 2","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 95 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 1","<b>Microcebus berthae<\/b><br>Site: Kirindy Forest<br>Locality: grid N5<br>Elevation: 60 m<br>Individuals: 68","<b>Microcebus berthae<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 84","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 3","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 5","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 141 m<br>Individuals: 4","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 181 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 181 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ambatoabo<br>Elevation: 181 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ankoba<br>Elevation: 188 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ankoba<br>Elevation: 236 m<br>Individuals: 3","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ankoba<br>Elevation: 236 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ebosika<br>Elevation: 596 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ebosika<br>Elevation: 378 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Ebosika<br>Elevation: 596 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 3","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 4","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 116 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 4","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 3","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 193 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 193 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 193 m<br>Individuals: 1","<b>Microcebus cf. murinus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 193 m<br>Individuals: 2","<b>Microcebus cf. murinus<\/b><br>Site: Mandena<br>Locality: <br>Elevation: 14 m<br>Individuals: 9","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 88 m<br>Individuals: 8","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 81 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 88 m<br>Individuals: 2","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 88 m<br>Individuals: 3","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 88 m<br>Individuals: 2","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 84 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Hazofotsy<br>Elevation: 84 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 3","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 111 m<br>Individuals: 3","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 183 m<br>Individuals: 2","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 2","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: Andohahela<br>Locality: Tsimelahy<br>Elevation: 161 m<br>Individuals: 1","<b>Microcebus griseorufus<\/b><br>Site: NA<br>Locality: <br>Elevation: 134 m<br>Individuals: 2","<b>Microcebus griseorufus<\/b><br>Site: NA<br>Locality: Ihazoara<br>Elevation: 140 m<br>Individuals: 82","<b>Microcebus griseorufus<\/b><br>Site: NA<br>Locality: Parcel 1<br>Elevation: 134 m<br>Individuals: 157","<b>Microcebus griseorufus<\/b><br>Site: NA<br>Locality: Parcel 2<br>Elevation: 134 m<br>Individuals: 111","<b>Microcebus lehilahytsara<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo and Andasivodihazo fragmented forest<br>Elevation: 1608 m<br>Individuals: 33","<b>Microcebus lehilahytsara<\/b><br>Site: Tsinjoarivo<br>Locality: Vatateza continuous forest<br>Elevation: 1394 m<br>Individuals: 12","<b>Microcebus murinus<\/b><br>Site: Ampijoroa<br>Locality: Jardin Botanique A<br>Elevation: 189 m<br>Individuals: 60","<b>Microcebus murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 121 m<br>Individuals: 1","<b>Microcebus murinus<\/b><br>Site: Andohahela<br>Locality: Mangatsiaka<br>Elevation: 167 m<br>Individuals: 1","<b>Microcebus murinus<\/b><br>Site: Kirindy Forest<br>Locality: grid N5<br>Elevation: 60 m<br>Individuals: 102","<b>Microcebus murinus<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 104","<b>Microcebus murinus<\/b><br>Site: Kirindy Mitea<br>Locality: <br>Elevation: 40 m<br>Individuals: 40","<b>Microcebus ravelobensis<\/b><br>Site: Ampijoroa<br>Locality: Jardin Botanique A<br>Elevation: 189 m<br>Individuals: 61","<b>Microcebus ravelobensis<\/b><br>Site: Ampijoroa<br>Locality: Jardin Botanique B<br>Elevation: 312 m<br>Individuals: 88","<b>Microcebus rufus<\/b><br>Site: Ranomafana<br>Locality: <br>Elevation: 1221 m<br>Individuals: 1","<b>Microcebus rufus<\/b><br>Site: Ranomafana<br>Locality: Iambafo<br>Elevation: 760 m<br>Individuals: 1","<b>Microcebus rufus<\/b><br>Site: Ranomafana<br>Locality: Talatakely<br>Elevation: 987 m<br>Individuals: 82","<b>Microcebus simmonsi<\/b><br>Site: Betampona<br>Locality: <br>Elevation: 309 m<br>Individuals: 28","<b>Mirza coquereli<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 11","<b>Phaner pallescens<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 1","<b>Propithecus diadema<\/b><br>Site: Eastern Madagascar<br>Locality: <br>Elevation: 646 m<br>Individuals: 1","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Andasivodihazo<br>Elevation: 1608 m<br>Individuals: 7","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Andasivolo (O)<br>Elevation: 1608 m<br>Individuals: 6","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Andoanakely (N)<br>Elevation: 1608 m<br>Individuals: 2","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Sarodrano<br>Elevation: 1608 m<br>Individuals: 1","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Mahatsinjo-Sarodrano (AF)<br>Elevation: 1608 m<br>Individuals: 3","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Vatateza East<br>Elevation: 1394 m<br>Individuals: 4","<b>Propithecus diadema<\/b><br>Site: Tsinjoarivo<br>Locality: Vatateza West<br>Elevation: 1394 m<br>Individuals: 10","<b>Propithecus verreauxi<\/b><br>Site: Berenty<br>Locality: <br>Elevation: 26 m<br>Individuals: 2","<b>Propithecus verreauxi<\/b><br>Site: Kirindy Forest<br>Locality: NA<br>Elevation: 60 m<br>Individuals: 22","<b>Propithecus verreauxi<\/b><br>Site: NA<br>Locality: <br>Elevation: 134 m<br>Individuals: 3","<b>Propithecus verreauxi<\/b><br>Site: NA<br>Locality: <br>Elevation: 145 m<br>Individuals: 1","<b>Propithecus verreauxi<\/b><br>Site: NA<br>Locality: <br>Elevation: 134 m<br>Individuals: 8","<b>Varecia rubra<\/b><br>Site: Masoala<br>Locality: Ambolohosy<br>Elevation: 91 m<br>Individuals: 3","<b>Varecia rubra<\/b><br>Site: Masoala<br>Locality: Andranobe<br>Elevation: 146 m<br>Individuals: 13","<b>Varecia variegata<\/b><br>Site: Ranomafana<br>Locality: Mangevo<br>Elevation: 938 m<br>Individuals: 41","<b>Varecia variegata<\/b><br>Site: Ranomafana<br>Locality: Vatoharanana<br>Elevation: 1096 m<br>Individuals: 14"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["#A6CEE3","#6CA9CF","#3385BB","#4693A8","#84BF96","#A3D77F","#6DBD57","#37A22F","#7F9D55","#D49B84","#F57C7C","#EB4647","#E42622","#F06C45","#FBB268","#FDA848","#FE8D19","#F48829","#DE9E83","#C6ADD3","#9D7BBA","#754AA0","#977899","#D6CA99","#F3E587","#D29F57","#B15928"],"labels":["Avahi laniger","Cheirogaleus crossleyi","Cheirogaleus grovesi","Cheirogaleus medius","Cheirogaleus sibreei","Eulemur rufifrons","Hapalemur griseus","Hapalemur meridionalis","Indri indri","Lemur catta","Lepilemur petteri","Lepilemur ruficaudatus","Microcebus","Microcebus berthae","Microcebus cf. murinus","Microcebus griseorufus","Microcebus lehilahytsara","Microcebus murinus","Microcebus ravelobensis","Microcebus rufus","Microcebus simmonsi","Mirza coquereli","Phaner pallescens","Propithecus diadema","Propithecus verreauxi","Varecia rubra","Varecia variegata"],"na_color":null,"na_label":"NA","opacity":1,"position":"bottomright","type":"factor","title":"Lemur species","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[-25.57050781250001,-12.07958984375],"lng":[43.25712890625002,50.48271484375002]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="step-4-distribution-of-body-mass-of-lemurs-by-species" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-distribution-of-body-mass-of-lemurs-by-species">Step 4: Distribution of body mass of lemurs by species</h4>
+<p>This visualization shows body mass distributions for each lemur species in the dataset. We can see that species vary widely in their typical body mass.</p>
+<p>Some species (e.g., <em>Varecia</em>, <em>Propithecus</em>) have higher body mass, often above 3–4 kg. Many <em>Microcebus</em> species appear near 0.05–0.1 kg, reflecting their extremely small size.</p>
+<p>Larger-bodied species are mainly in genera like Varecia, Propithecus, Indri.</p>
+<p>Small-bodied species (mouse lemurs) in genus Microcebus cluster at extremely low weights.</p>
+<p>Variability differs: Some species (e.g., <em>Lemur catta</em>) show wide ranges, meaning individuals differ substantially in mass. Others show tight clusters, suggesting more consistent body size.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lemurs_imputed, <span class="fu">aes</span>(<span class="at">x =</span> Genus_Species, <span class="at">y =</span> Body_Mass)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"pink"</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Body Mass by Species"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Species"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Body mass (kg)"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-report-MA615_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-5-build-webpage---ui" class="level4">
+<h4 class="anchored" data-anchor-id="step-5-build-webpage---ui">Step 5: Build webpage - UI</h4>
+<p>This code builds an interactive Shiny web app that educates users about lemurs and their conservation in Madagascar. The <code>ui</code> defines a styled layout with global CSS to enlarge and bold tab titles, color main headings dark red and subheadings dark blue, and then creates a banner at the top with a full-width lemur image and an overlaid title, “Endangered Species – Lemurs in Madagascar.” Below the banner, content is organized into four tabs: <strong>Introduction</strong>, which embeds a YouTube video and presents narrative text on lemur biology, evolution, behavior, threats, and conservation; <strong>Endangered Species</strong>, which combines explanatory text with another video to describe forest loss, impacts on ruffed lemurs, and current conservation actions; <strong>Characteristics</strong>, which provides two interactive tools—a “dictionary” lookup table that shows genus and family for a selected common name, and a body-mass histogram that visualizes the distribution of body mass for a chosen species; and <strong>Map of Distribution</strong>, which displays an interactive leaflet map where colored circle markers show species locations, with bubble size indicating the number of individuals and popups reporting site details. The <code>server</code> function powers the app’s interactivity: it renders the leaflet map with Madagascar’s polygon and species-specific markers, generates the dictionary table based on the selected common name, and draws the body-mass histogram for the selected species, updating outputs dynamically whenever the user changes their selections.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ---------- UI ----------</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Global styles</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">head</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">style</span>(<span class="fu">HTML</span>(<span class="st">"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">      /* Make tab titles bigger and bold */</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">      .nav-tabs &gt; li &gt; a {</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">        font-size: 18px;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">        font-weight: bold;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">      /* Main headings (e.g., 'Lemurs of Madagascar') */</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">      h2 {</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">        color: #8B0000;        /* dark red */</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">      /* Subheadings (e.g., 'Evolutionary Background') */</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="st">      h3 {</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="st">        color: #003366;        /* dark blue */</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="st">        text-align: center;    /* centered */</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="st">    "</span>))</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Banner with image + title on top of it</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"position: relative; margin-bottom: 20px;"</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># banner image</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">img</span>(</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">src =</span> <span class="st">"lemur_banner.jpg"</span>,  <span class="co"># file inside www/</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="st">"width: 100%; max-height: 300px; object-fit: cover;"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># title overlaid on the image</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">h1</span>(</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Endangered Species - Lemurs in Madagascar"</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">paste</span>(</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"position: absolute;"</span>,</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"bottom: 20px;"</span>,</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"left: 30px;"</span>,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"color: white;"</span>,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"font-size: 42px;"</span>,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"font-weight: bold;"</span>,</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"text-shadow: 0 0 8px rgba(0,0,0,0.8);"</span>,</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"margin: 0;"</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Tabs ----</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabsetPanel</span>(</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabPanel</span>(</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Introduction"</span>,</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>      <span class="co"># --- YouTube video ---</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"text-align: center;"</span>,</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">iframe</span>(</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> <span class="st">"800"</span>,</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> <span class="st">"450"</span>,</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>          <span class="at">src =</span> <span class="st">"https://www.youtube.com/embed/6eaTBoqpNEg"</span>,</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>          <span class="at">frameborder =</span> <span class="st">"0"</span>,</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>          <span class="at">allow =</span> <span class="st">"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"</span>,</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>          <span class="at">allowfullscreen =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(), <span class="fu">br</span>(),</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>      <span class="co"># --- Introduction Text ---</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h2</span>(<span class="st">"Lemurs of Madagascar"</span>),</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Madagascar is renowned for its lemurs—unique primates that look like a blend of cat, squirrel, and dog. </span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="st">              Found nowhere else on Earth, these animals display remarkable behaviors, from the whale-like calls of the </span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="st">              indri to the elegant, dance-like leaps of the sifaka. The sections below introduce their origins, </span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="st">              behavior, and conservation."</span>),</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Evolutionary Background"</span>),</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Unlike other parts of the world, Madagascar lacks the dominant primate group known as the Haplorhini, </span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="st">              which includes monkeys, apes, and humans. Instead, this ecological space is occupied by lemurs, members </span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="st">              of the more ancient Strepsirhini lineage, which also includes lorises, bush babies, and pottos. These early </span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="st">              primates were generally small, nocturnal, insect-eating animals with large eyes and long snouts. Madagascar’s </span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="st">              long geographic isolation allowed lemurs to survive and evolve relatively undisturbed."</span>),</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"About 160 million years ago, Madagascar was still attached to Africa as part of the supercontinent </span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="st">              Gondwanaland. When the landmass split, Madagascar drifted eastward and became isolated. The first lemur-like </span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="st">              primates arose in Africa around 60 million years ago and eventually reached Madagascar. Later, when monkeys </span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="st">              emerged roughly 17–23 million years ago, the island was already cut off, preventing monkeys from ever arriving. </span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a><span class="st">              Because monkeys were more adaptable and social, they outcompeted lemur relatives almost everywhere </span></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="st">              else—except on Madagascar."</span>),</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Freed from such competition, lemurs diversified extensively, adapting to a wide range of habitats with few </span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="st">              large predators. They eventually developed many traits similar to monkeys, including social living, daytime </span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="st">              activity, and plant-based diets."</span>),</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Humans arrived much later, about 2,000 years ago, bringing dramatic ecological change. Their presence led to </span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="st">              the extinction of at least 15 lemur species, including giants as large as modern gorillas. Today, the largest </span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="st">              living lemur—the indri—is tiny in comparison. Nearly all species now face extinction, primarily due to </span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="st">              deforestation and hunting."</span>),</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Social Behavior"</span>),</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Lemur societies vary greatly across species. Ring-tailed lemurs (Lemur catta) form large, female-led groups </span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="st">              of up to 30 members, where females have priority access to resources. In contrast, species like the aye-aye </span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="st">              (Daubentonia madagascariensis) are mostly solitary and meet only to reproduce. Generally, diurnal species form </span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="st">              more complex social groups, while nocturnal species tend to live alone or in small units. Grooming plays a </span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="st">              critical role in strengthening social bonds and maintaining hygiene."</span>),</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Diet and Feeding Strategies"</span>),</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Lemur diets shift according to species and seasonal food availability. Many rely heavily on fruit, but most </span></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a><span class="st">              are flexible omnivores that eat leaves, flowers, seeds, nectar, and insects. Bamboo lemurs (Hapalemur spp.) </span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="st">              specialize in eating bamboo that contains cyanide levels lethal to most animals. The aye-aye, using its </span></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="st">              elongated middle finger, extracts insect larvae from wood, filling a niche similar to a woodpecker."</span>),</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Predators and Threats"</span>),</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Natural predators include the fossa (Cryptoprocta ferox), a tree-climbing carnivore, and several large birds </span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="st">              of prey like the Madagascar harrier-hawk. However, the most significant threats come from humans. Widespread </span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="st">              habitat loss, fragmentation, and hunting have caused severe population declines. Today, over 95% of lemur species </span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="st">              are listed as endangered or critically endangered."</span>),</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Conservation Efforts"</span>),</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Because lemurs are found only in Madagascar and play key ecological roles, they are central to conservation </span></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="st">              initiatives. Protected areas such as Ranomafana, Andasibe-Mantadia, and Masoala National Parks provide essential </span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a><span class="st">              habitat. Conservation groups are also working to restore forests, reduce poaching, support sustainable community </span></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="st">              practices, and expand ecotourism. Zoos worldwide maintain breeding programs for select species, though long-term </span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="st">              survival still depends on protecting Madagascar’s forests."</span>),</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Why Madagascar’s Lemurs Matter Globally"</span>),</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Despite being just one of many countries with native primates, Madagascar contains an exceptionally large share </span></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="st">              of primate diversity. As noted by primatologist Russell Mittermeier, the island shelters 21% of all primate genera </span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="st">              (14 of 65) and 36% of primate families (5 of 14)—the highest concentration worldwide."</span>),</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Because of this, Madagascar is recognized as a distinct fourth biogeographic region for primate study, separate </span></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="st">              from the usual three: the Americas, Asia, and mainland Africa. Lemurs represent an ancient lineage that has </span></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="st">              endured environmental change and human pressure for millions of years."</span>),</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Protecting lemurs is essential not only for preserving Madagascar’s natural heritage but also for advancing </span></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a><span class="st">              scientific knowledge about primate behavior, evolution, and ecology. Lemurs play vital roles in seed dispersal, </span></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a><span class="st">              pollination, and forest renewal, making their conservation a global priority."</span>)</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabPanel</span>(</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Endangered Species"</span>,</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h2</span>(<span class="st">"Threats to Madagascar’s Lemurs"</span>),</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Madagascar, located off the southeastern coast of Africa, contains extraordinary biological richness, </span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="st">          with an estimated 12,000 plant species and 700 vertebrate species, of which 80–90% occur nowhere else on Earth. </span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="st">          After being geographically isolated for approximately 88 million years, and spanning an area comparable to the </span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="st">          northeastern United States, the island has become one of the most significant biodiversity hotspots globally. </span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="st">          While species diversity is high across the island, the biodiversity of its tropical forests is particularly remarkable."</span>),</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Despite this ecological importance, Madagascar’s forests—much like tropical forests worldwide—are experiencing </span></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a><span class="st">          rapid degradation. Fragmentation, unsustainable harvesting of timber and forest products, over-hunting, invasive </span></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="st">          species, pollution, and climate change have all contributed to declines in native species. Although climate change </span></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a><span class="st">          is often emphasized because of its widespread impacts, recent research indicates that, in Madagascar, it is not the </span></span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a><span class="st">          primary factor driving current species losses. Instead, human-induced habitat destruction plays the dominant role."</span>),</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Forest Loss and Its Consequences"</span>),</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Nearly 44% of Madagascar’s forests have disappeared in the past six decades, largely due to slash-and-burn </span></span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a><span class="st">          agriculture (locally known as tavy) and charcoal production. The pace and extent of habitat loss and fragmentation </span></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="st">          have been severe. Almost half of all remaining forest now lies within 100 meters (approximately 300 feet) of a </span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a><span class="st">          non-forested edge, exposing wildlife to ongoing disturbance and reducing ecosystem integrity. Illegal hunting and </span></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="st">          the capture of wildlife for the pet trade further exacerbate biodiversity decline."</span>),</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"As a result, Madagascar’s fauna faces extreme conservation pressure. According to the International Union for </span></span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a><span class="st">          Conservation of Nature (IUCN), 95% of lemur species—including some of the most iconic primates—are currently </span></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a><span class="st">          threatened with extinction. Madagascar’s biodiversity crisis has intensified over the last decade."</span>),</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ---- Video BEFORE the Impact on Ruffed Lemurs section ----</span></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"text-align: center; margin-top: 25px; margin-bottom: 25px;"</span>,</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">iframe</span>(</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> <span class="st">"800"</span>,</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> <span class="st">"450"</span>,</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>          <span class="at">src =</span> <span class="st">"https://www.youtube.com/embed/TxUPMzI14WY?start=19"</span>,</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>          <span class="at">frameborder =</span> <span class="st">"0"</span>,</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>          <span class="at">allow =</span> <span class="st">"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"</span>,</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>          <span class="at">allowfullscreen =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Impact on Ruffed Lemurs"</span>),</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Two recent scientific studies have examined how human activities influence ruffed lemurs, a group of critically </span></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="st">          endangered primates that play a key ecological role as major seed dispersers and indicators of rainforest health. </span></span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a><span class="st">          Modeling that incorporated a range of climate and deforestation scenarios suggests that suitable habitat for the </span></span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a><span class="st">          two ruffed lemur species could decline by up to 93% over the next century. Under unchecked deforestation, nearly </span></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="st">          all remaining eastern rainforest habitat could disappear, effectively eliminating ruffed lemur populations. The </span></span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a><span class="st">          analyses demonstrate that habitat loss is likely to have more immediate and severe impacts on these species than </span></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a><span class="st">          climate change."</span>),</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"However, projections also indicate that if protected areas maintain their current forest cover, the decline in </span></span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a><span class="st">          suitable habitat could be reduced to approximately 62%, highlighting the importance of safeguarding and improving </span></span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="st">          the integrity of existing reserves."</span>),</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"A separate genetic study published in late 2019 examined how landscape features affect ruffed lemur gene flow—a </span></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="st">          crucial process that maintains genetic diversity and supports population resilience. The study assessed both </span></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a><span class="st">          natural barriers and human-caused constraints on movement, including rivers, elevation changes, roads, habitat </span></span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="st">          quality, and human population density. Human activity emerged as the strongest predictor of reduced genetic </span></span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a><span class="st">          exchange, with deforestation near human settlements forming significant barriers to movement and dispersal."</span>),</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Collectively, the evidence demonstrates that deforestation represents an urgent and direct threat to ruffed lemur </span></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a><span class="st">          survival, surpassing the short-term impacts of climate change. This threat extends beyond lemurs; many </span></span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a><span class="st">          forest-dependent plants and animals face similar risks. Globally, over one-third (approximately 36.5%) of plant </span></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="st">          species are extremely rare and disproportionately vulnerable to human land use. Regions with the highest </span></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a><span class="st">          concentration of rare species often coincide with areas experiencing the greatest human disturbance."</span>),</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h3</span>(<span class="st">"Opportunities for Conservation Action"</span>),</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Madagascar’s natural heritage stands at a critical juncture. Strengthening protected areas, expanding </span></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="st">          reforestation initiatives, and improving forest management remain essential strategies for mitigating habitat </span></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="st">          loss while broader efforts address global climate change. Several nonprofit organizations are actively engaged in </span></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a><span class="st">          these efforts. For example, the Madagascar Biodiversity Partnership, in collaboration with the Arbor Day </span></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a><span class="st">          Foundation’s Plant Madagascar project, has planted nearly three million trees in the Kianjavato region—identified </span></span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a><span class="st">          as a priority zone for ruffed lemur conservation. The Centre ValBio, based near Ranomafana National Park, is also </span></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a><span class="st">          conducting extensive reforestation work to support local ecosystems."</span>),</span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"At the policy level, Madagascar’s president, Andry Rajoelina, announced an initiative to reforest 40,000 hectares </span></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a><span class="st">          (99,000 acres) annually for five consecutive years, a scale equivalent to approximately 75,000 football fields. </span></span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a><span class="st">          While the pledge is promising, the plan currently lacks detailed implementation strategies."</span>),</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(<span class="st">"Spatial projections from recent studies identify areas where habitat is likely to persist, as well as regions </span></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="st">          facing high risk of near-complete habitat loss or genetic isolation for ruffed lemurs. Because lemur presence </span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="st">          strongly correlates with overall biodiversity, protecting lemur habitats will also safeguard broader ecological </span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a><span class="st">          communities. These research findings provide a roadmap for prioritizing conservation interventions to preserve </span></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a><span class="st">          Madagascar’s exceptionally rich but increasingly threatened biodiversity."</span>)</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabPanel</span>(</span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Characteristics"</span>,</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ---- Section 1: Dictionary ----</span></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h2</span>(<span class="st">"Dictionary"</span>),</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(</span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Use this table to look up the genus and family for any lemur common name."</span>,</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"font-size: 18px; margin-top: 5px; margin-bottom: 10px;"</span></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">label</span>(</span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Choose a common name:"</span>,</span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"font-size: 14px; font-weight: bold;"</span></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>      <span class="fu">selectInput</span>(</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a>        <span class="at">inputId =</span> <span class="st">"dict_common"</span>,</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>        <span class="at">label   =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>        <span class="at">choices =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(lemurs_imputed<span class="sc">$</span>Common_Name)),</span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>        <span class="at">selected =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(lemurs_imputed<span class="sc">$</span>Common_Name))[<span class="dv">1</span>]</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableOutput</span>(<span class="st">"dict_table"</span>),</span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a>      <span class="fu">hr</span>(),</span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ---- Section 2: Distribution of Body Mass by Species ----</span></span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h2</span>(<span class="st">"Distribution of Body Mass by Species"</span>),</span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>        <span class="st">"To explore the distribution of body mass for a particular species, please choose a species from the dropdown menu below."</span>,</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"font-size: 18px; margin-top: 5px; margin-bottom: 10px;"</span></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">label</span>(</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Choose a species:"</span>,</span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"font-size: 14px; font-weight: bold;"</span></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>      <span class="fu">selectInput</span>(</span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>        <span class="at">inputId =</span> <span class="st">"bm_species"</span>,</span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>        <span class="at">label   =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>        <span class="at">choices =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(lemurs_imputed<span class="sc">$</span>Genus_Species)),</span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>        <span class="at">selected =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(lemurs_imputed<span class="sc">$</span>Genus_Species))[<span class="dv">1</span>]</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plotOutput</span>(<span class="st">"bm_hist"</span>, <span class="at">height =</span> <span class="st">"400px"</span>)</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tabPanel</span>(</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Map of Distribution"</span>,</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a>      <span class="fu">br</span>(),</span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">h2</span>(<span class="st">"Map of Lemur Distribution"</span>),</span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">p</span>(</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>        <span class="st">"This map illustrates the geographic distribution of lemur species across Madagascar. </span></span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="st">     Each bubble represents a specific observation site, and the size of the bubble reflects </span></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a><span class="st">     the number of individuals recorded at that location. By exploring this map, you can </span></span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="st">     identify where each species resides, compare population sizes across regions, and view </span></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="st">     additional ecological information such as locality names and elevation. This visualization </span></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a><span class="st">     highlights Madagascar’s remarkable biodiversity and the unique habitats that support </span></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="st">     different lemur species."</span>,</span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"font-size: 18px; margin-bottom: 15px;"</span></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>      <span class="fu">leafletOutput</span>(<span class="st">"lemur_map"</span>, <span class="at">height =</span> <span class="st">"650px"</span>)</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-6-build-webpage---server" class="level4">
+<h4 class="anchored" data-anchor-id="step-6-build-webpage---server">Step 6: Build webpage - Server</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ---------- SERVER ----------</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>lemur_map <span class="ot">&lt;-</span> <span class="fu">renderLeaflet</span>({</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldImagery"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addProviderTiles</span>(<span class="st">"CartoDB.PositronOnlyLabels"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addPolygons</span>(</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">data   =</span> madagascar,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">weight =</span> <span class="dv">1</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">color  =</span> <span class="st">"grey40"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillColor =</span> <span class="st">"transparent"</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> lemurs_counts_sf,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">radius =</span> <span class="sc">~</span><span class="dv">2</span> <span class="sc">+</span> n_individuals,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">stroke =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillOpacity =</span> <span class="fl">0.8</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="sc">~</span><span class="fu">pal</span>(Genus_Species),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste0</span>(</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>          <span class="st">"&lt;b&gt;Species:&lt;/b&gt; "</span>, Genus_Species, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>          <span class="st">"&lt;b&gt;Individuals at this site:&lt;/b&gt; "</span>, n_individuals, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>          <span class="st">"&lt;b&gt;Site:&lt;/b&gt; "</span>, Site_Name, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>          <span class="st">"&lt;b&gt;Locality:&lt;/b&gt; "</span>, Locality, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>          <span class="st">"&lt;b&gt;Elevation:&lt;/b&gt; "</span>, Elevation</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">label =</span> <span class="sc">~</span><span class="fu">paste0</span>(Genus_Species, <span class="st">" (n = "</span>, n_individuals, <span class="st">")"</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addLegend</span>(</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"bottomright"</span>,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> pal,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">values =</span> lemurs_counts_sf<span class="sc">$</span>Genus_Species,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Species"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">opacity =</span> <span class="dv">1</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Dictionary table ----</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>dict_table <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(input<span class="sc">$</span>dict_common)</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    lemurs_imputed <span class="sc">%&gt;%</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Common_Name <span class="sc">==</span> input<span class="sc">$</span>dict_common) <span class="sc">%&gt;%</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(Common_Name, Genus_Species, Family) <span class="sc">%&gt;%</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(Genus_Species)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Body-mass histogram ----</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>bm_hist <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(input<span class="sc">$</span>bm_species)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> lemurs_imputed <span class="sc">%&gt;%</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Genus_Species <span class="sc">==</span> input<span class="sc">$</span>bm_species, <span class="sc">!</span><span class="fu">is.na</span>(Body_Mass))</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hist</span>(</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>      df<span class="sc">$</span>Body_Mass,</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Body Mass Distribution for"</span>, input<span class="sc">$</span>bm_species),</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab =</span> <span class="st">"Body mass (kg)"</span>,</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">col  =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>      <span class="at">border =</span> <span class="st">"white"</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-7-run-app.r" class="level4">
+<h4 class="anchored" data-anchor-id="step-7-run-app.r">Step 7: Run app.R</h4>
+<p>The command <code>shinyApp(ui = ui, server = server)</code> launches the Shiny application by combining the user-interface layout (<code>ui</code>) with the server logic (<code>server</code>), allowing all interactive features, visualizations, and outputs defined in the code to run as a fully functioning web app.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ---------- RUN APP ----------</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(<span class="at">ui =</span> ui, <span class="at">server =</span> server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-8-conclusion" class="level4">
+<h4 class="anchored" data-anchor-id="step-8-conclusion">Step 8: Conclusion</h4>
+<p>In conclusion, effective protection of Madagascar’s lemurs depends on conserving their forest habitats and strengthening the capacity of local communities to safeguard both wildlife and natural resources. A key strategy involves working collaboratively with communities living near critical lemur areas, such as the Amoron’i Onilahy Protected Area, by training local forest patrols (polisin’ala) to monitor lemur populations, document habitat conditions, detect illegal activities, and help enforce protections. These community-based patrols, equipped with modern tools like smartphone reporting systems, have contributed to reduced deforestation and increasing lemur numbers in targeted zones. Education and outreach are also essential. Together, these approaches demonstrate that protecting lemurs requires not only habitat conservation, but also community engagement, environmental education, and economic support that align human well-being with long-term biodiversity protection.</p>
+</section>
+<section id="step-9-click-this-icon-to-visit-to-the-webpage" class="level4">
+<h4 class="anchored" data-anchor-id="step-9-click-this-icon-to-visit-to-the-webpage">Step 9: Click this icon to visit to the webpage</h4>
+<p style="text-align: center;">
+</p><p><a href="https://khang-trangjamieson.shinyapps.io/Final-project-MA615-Lemurs-Madagascar/" target="_blank"> <img src="lemur_icon.png" alt="Open Lemur App" width="80"><br> <span style="font-weight: bold;">Open Lemur App</span> </a></p>
+<p></p>
+</section>
+<section id="step-10-reference" class="level4">
+<h4 class="anchored" data-anchor-id="step-10-reference">Step 10: Reference</h4>
+<p><a href="https://pandoradata.earth/dataset/isomad-modern-biological-material" class="uri">https://pandoradata.earth/dataset/isomad-modern-biological-material</a></p>
+<p><a href="https://www.wildmadagascar.org/wildlife/lemurs.php" class="uri">https://www.wildmadagascar.org/wildlife/lemurs.php</a></p>
+<p><a href="https://leakeyfoundation.org/lemurs-are-the-worlds-most-endangered-mammals-but-planting-trees-can-help-save-them/" class="uri">https://leakeyfoundation.org/lemurs-are-the-worlds-most-endangered-mammals-but-planting-trees-can-help-save-them/</a></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

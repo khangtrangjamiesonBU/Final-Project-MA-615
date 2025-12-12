@@ -1,0 +1,680 @@
+---
+title: "Lemurs in Madagascar: Data Cleaning, Exploration and Webpage"
+author: "Khang-Trang Nguyen"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+#### Introduction
+
+This report examines lemurs, the reasons they are classified as endangered species, and the unique ecosystem they inhabit on the island of Madagascar. Madagascar is globally recognized for its lemurs—distinctive primates with physical features resembling a blend of cat, squirrel, and dog. Found exclusively on this island, lemurs exhibit extraordinary behaviors, such as the haunting, whale-like songs of the indri and the graceful, dance-like leaps of the sifaka.
+
+Over the past sixty years, Madagascar has lost nearly 44% of its forest cover, primarily due to slash-and-burn agriculture (known locally as *tavy*) and the widespread production of charcoal. This rapid deforestation has led to extensive habitat loss and fragmentation. Today, nearly half of the remaining forest lies within 100 meters (approximately 300 feet) of an exposed edge, leaving wildlife vulnerable to disturbance and diminishing overall ecosystem stability. Additional pressures—such as illegal hunting and the capture of animals for the pet trade—further accelerate biodiversity decline.
+
+These threats have placed Madagascar’s wildlife, particularly its lemurs, under severe conservation stress. According to the International Union for Conservation of Nature (IUCN), an estimated 95% of lemur species are now threatened with extinction, making them the most endangered group of mammals in the world. The island’s biodiversity crisis has worsened significantly in recent years.
+
+The purpose of this report and its accompanying webpage is to increase public awareness about the critical endangerment of lemurs and to encourage meaningful action to support their protection and the preservation of Madagascar’s fragile ecosystems.
+
+#### Step 1: Read CSV file
+
+The dataset was retrieved from the website Pandoradata.erth. The CSV fiile name is supplementary-table-s1-3.csv.
+
+```{r, warning=FALSE, message=FALSE}
+library(shiny)
+library(dplyr)
+library(stringr)
+library(readr)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(leaflet)
+library(tibble)
+library(RColorBrewer)
+library(viridisLite)
+library(ggplot2)
+
+# 1. Read lemur data
+lem_raw <- read.csv("supplementary-table-s1-3.csv", skip = 1)
+
+# Filter variables so it narrows down to only Lemur (not other animals)
+lemurs <- lem_raw %>%
+  filter(
+    Kingdom == "Animalia",
+    Class == "Mammalia",
+    Order == "Primates"
+  ) %>%
+  filter(!is.na(Latitude), !is.na(Longitude))
+```
+
+#### Step 2: NAs imputation
+
+Because the *Body Mass* variable contained a large number of missing values, imputation was performed separately for each species. Since body mass varies widely across species—and each species has its own biologically appropriate range—using a single overall imputation method would be inappropriate and potentially misleading. Instead, species-specific imputation ensures that the filled values reflect realistic physiological ranges.
+
+For several species in the dataset, all recorded body mass values were missing. In these cases, verified body mass ranges were obtained from reputable external sources, and the missing values were imputed by randomly drawing numbers within the documented range for that species. This approach preserves biological plausibility while allowing these species to be retained in the analysis.
+
+```{r, warning=FALSE, message=FALSE}
+# Because variable "Body Mass" has a lot of NAs, I do imputation by species.
+# Each species has their own range of body mass so we cannot do mass imputation but imputation #by species.
+# There are some species that their entire body mass values were NAs; therefore, I googled the range of their body mass and impute NAs by drawing random number within that range.
+# Body-mass ranges for species with all NAs
+
+mass_ranges <- tribble(
+  ~Genus_Species,              ~min_mass, ~max_mass,
+  "Avahi laniger",             0.6,       1.3,
+  "Cheirogaleus grovesi",      0.4,       0.41,
+  "Cheirogaleus medius",       0.12,      0.27,
+  "Eulemur rufifrons",         2.2,       2.3,
+  "Hapalemur griseus",         0.7,       1.0,
+  "Hapalemur meridionalis",    0.965,     1.179,
+  "Indri indri",               6.0,       9.5,
+  "Lemur catta",               2.2,       3.5,
+  "Lepilemur petteri",         0.5,       0.9,
+  "Lepilemur ruficaudatus",    0.6,       0.9,
+  "Microcebus",                0.03,      0.12,
+  "Microcebus cf. murinus",    0.058,     0.067,
+  "Mirza coquereli",           0.29,      0.32,
+  "Phaner pallescens",         0.3,       0.5,
+  "Propithecus diadema",       5.0,       7.0,
+  "Propithecus verreauxi",     2.5,       4.0,
+  "Varecia rubra",             3.3,       4.1
+)
+
+set.seed(123)
+
+# Impute & clean
+lemurs_imputed <- lemurs %>%
+  mutate(Body_Mass = as.numeric(Body_Mass)) %>%
+  group_by(Genus_Species) %>%
+  mutate(
+    Body_Mass = if_else(
+      is.na(Body_Mass),
+      median(Body_Mass, na.rm = TRUE),
+      Body_Mass
+    )
+  ) %>%
+  ungroup() %>%
+  left_join(mass_ranges, by = "Genus_Species") %>%
+  mutate(
+    Body_Mass = if_else(
+      is.na(Body_Mass) & !is.na(min_mass),
+      runif(n(), min_mass, max_mass),
+      Body_Mass
+    )
+  ) %>%
+  select(-min_mass, -max_mass)
+```
+
+#### Step 3: Geospatial map
+
+First, the dataset is cleaned to ensure that all text fields use a consistent character encoding. All character-type columns in the `lemurs_imputed` data frame are converted to UTF-8 using `iconv()`. This helps prevent problems with special characters (e.g., accents, symbols) when displaying or mapping the data.
+
+Next, the data are aggregated to create a site-level summary suitable for mapping. The code groups the records by:
+
+-   **Genus_Species**
+
+-   **Site_Name**
+
+-   **Locality**
+
+-   **Latitude**
+
+-   **Longitude**
+
+Within each group (i.e., each unique species at a specific location), it:
+
+-   Counts the number of individual records and stores this as `n_individuals`.
+
+-   Extracts the first recorded elevation value for that group and saves it as `Elevation`.
+
+This produces a new dataset, `lemurs_counts`, in which each row represents a unique combination of species and site, with an associated count of individuals and elevation.
+
+The data are then converted into a spatial object using `st_as_sf()`. The longitude and latitude columns are used as spatial coordinates, and the coordinate reference system (CRS) is set to EPSG:4326, which corresponds to standard geographic coordinates (WGS84). This spatial object, `lemurs_counts_sf`, is what will be displayed on the map.
+
+To provide geographic context, the code also downloads a polygon representing the outline of Madagascar using `ne_countries()` from the **rnaturalearth** package. This polygon (`madagascar`) will be used as the base layer beneath the lemur points.
+
+The next step is to define a color scheme for the map. The code:
+
+1.  Extracts all unique species names from `Genus_Species`.
+
+2.  Counts how many species are present.
+
+3.  Generates a color palette with one distinct color per species using `colorRampPalette()` and the `"Paired"` palette from **RColorBrewer**.
+
+4.  Creates a `colorFactor` object, `pal`, that assigns a specific color to each species.
+
+Finally, an interactive map is created using **leaflet**:
+
+-   A base tile layer is added with `addTiles()`.
+
+-   The outline of Madagascar is overlaid using `addPolygons()`, shown as an unfilled polygon with a thin border.
+
+-   Lemur locations are plotted using `addCircleMarkers()`, where:
+
+    -   Each point corresponds to a species at a specific site.
+
+    -   The **radius** of each circle is scaled by the number of individuals (`n_individuals`), using a log transformation and a minimum size, so that sites with more records appear as larger circles.
+
+    -   The **color** of each point is determined by the species, using the previously defined palette `pal`.
+
+    -   A **popup** appears when a user clicks on a point, displaying:
+
+        \(1\) Species name
+
+        \(2\) Site name
+
+        \(3\) Locality
+
+        \(4\) Elevation (in meters)
+
+        \(5\) Number of individuals recorded at that site
+
+    A legend is added in the bottom-right corner of the map using `addLegend()`. This legend shows the color associated with each lemur species, helping viewers interpret the map.
+
+```{r, warning=FALSE, message=FALSE}
+# Fix encoding for character columns
+lemurs_imputed <- lemurs_imputed %>%
+  mutate(across(where(is.character), ~ iconv(.x, from = "", to = "UTF-8")))
+
+# Aggregate for map
+lemurs_counts <- lemurs_imputed %>%
+  group_by(
+    Genus_Species,
+    Site_Name,
+    Locality,
+    Latitude,
+    Longitude
+  ) %>%
+  summarise(
+    n_individuals = n(),
+    Elevation     = first(Elevation),
+    .groups = "drop"
+  )
+
+# sf object
+lemurs_counts_sf <- st_as_sf(
+  lemurs_counts,
+  coords = c("Longitude", "Latitude"),
+  crs = 4326
+)
+
+# Madagascar polygon
+madagascar <- ne_countries(
+  scale = "medium",
+  country = "Madagascar",
+  returnclass = "sf"
+)
+
+# Color palette by species
+species_levels <- sort(unique(lemurs_counts_sf$Genus_Species))
+n_species <- length(species_levels)
+pal_vec <- colorRampPalette(brewer.pal(12, "Paired"))(n_species)
+
+pal <- colorFactor(
+  palette = pal_vec,
+  domain  = species_levels
+)
+
+# ---- THIS PART ACTUALLY DRAWS THE MAP ----
+
+leaflet(lemurs_counts_sf) |>
+  addTiles() |>
+  addPolygons(
+    data = madagascar,
+    fill = FALSE,
+    weight = 1
+  ) |>
+  addCircleMarkers(
+    radius = ~pmax(3, log10(n_individuals + 1) * 4),
+    stroke = FALSE,
+    fillOpacity = 0.8,
+    color = ~pal(Genus_Species),
+    popup = ~paste0(
+      "<b>", Genus_Species, "</b><br>",
+      "Site: ", Site_Name, "<br>",
+      "Locality: ", Locality, "<br>",
+      "Elevation: ", Elevation, " m<br>",
+      "Individuals: ", n_individuals
+    )
+  ) |>
+  addLegend(
+    "bottomright",
+    pal    = pal,
+    values = ~Genus_Species,
+    title  = "Lemur species",
+    opacity = 1
+  )
+```
+
+#### Step 4: Distribution of body mass of lemurs by species
+
+This visualization shows body mass distributions for each lemur species in the dataset. We can see that species vary widely in their typical body mass.
+
+Some species (e.g., *Varecia*, *Propithecus*) have higher body mass, often above 3–4 kg. Many *Microcebus* species appear near 0.05–0.1 kg, reflecting their extremely small size.
+
+Larger-bodied species are mainly in genera like Varecia, Propithecus, Indri.
+
+Small-bodied species (mouse lemurs) in genus Microcebus cluster at extremely low weights.
+
+Variability differs: Some species (e.g., *Lemur catta*) show wide ranges, meaning individuals differ substantially in mass. Others show tight clusters, suggesting more consistent body size.
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(lemurs_imputed, aes(x = Genus_Species, y = Body_Mass)) +
+  geom_boxplot(fill = "pink") +
+  coord_flip() +
+  labs(
+    title = "Body Mass by Species",
+    x = "Species",
+    y = "Body mass (kg)"
+  )
+```
+
+#### Step 5: Build webpage - UI
+
+This code builds an interactive Shiny web app that educates users about lemurs and their conservation in Madagascar. The `ui` defines a styled layout with global CSS to enlarge and bold tab titles, color main headings dark red and subheadings dark blue, and then creates a banner at the top with a full-width lemur image and an overlaid title, “Endangered Species – Lemurs in Madagascar.” Below the banner, content is organized into four tabs: **Introduction**, which embeds a YouTube video and presents narrative text on lemur biology, evolution, behavior, threats, and conservation; **Endangered Species**, which combines explanatory text with another video to describe forest loss, impacts on ruffed lemurs, and current conservation actions; **Characteristics**, which provides two interactive tools—a “dictionary” lookup table that shows genus and family for a selected common name, and a body-mass histogram that visualizes the distribution of body mass for a chosen species; and **Map of Distribution**, which displays an interactive leaflet map where colored circle markers show species locations, with bubble size indicating the number of individuals and popups reporting site details. The `server` function powers the app’s interactivity: it renders the leaflet map with Madagascar’s polygon and species-specific markers, generates the dictionary table based on the selected common name, and draws the body-mass histogram for the selected species, updating outputs dynamically whenever the user changes their selections.
+
+```{r, warning=FALSE, message=FALSE}
+## ---------- UI ----------
+
+ui <- fluidPage(
+  # Global styles
+  tags$head(
+    tags$style(HTML("
+      /* Make tab titles bigger and bold */
+      .nav-tabs > li > a {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      /* Main headings (e.g., 'Lemurs of Madagascar') */
+      h2 {
+        color: #8B0000;        /* dark red */
+      }
+
+      /* Subheadings (e.g., 'Evolutionary Background') */
+      h3 {
+        color: #003366;        /* dark blue */
+        text-align: center;    /* centered */
+      }
+    "))
+  ),
+  # Banner with image + title on top of it
+  tags$div(
+    style = "position: relative; margin-bottom: 20px;",
+    
+    # banner image
+    tags$img(
+      src = "lemur_banner.jpg",  # file inside www/
+      style = "width: 100%; max-height: 300px; object-fit: cover;"
+    ),
+    
+    # title overlaid on the image
+    tags$h1(
+      "Endangered Species - Lemurs in Madagascar",
+      style = paste(
+        "position: absolute;",
+        "bottom: 20px;",
+        "left: 30px;",
+        "color: white;",
+        "font-size: 42px;",
+        "font-weight: bold;",
+        "text-shadow: 0 0 8px rgba(0,0,0,0.8);",
+        "margin: 0;"
+      )
+    )
+  ),
+  
+  # ---- Tabs ----
+  tabsetPanel(
+    tabPanel(
+      "Introduction",
+      br(),
+      
+      # --- YouTube video ---
+      tags$div(
+        style = "text-align: center;",
+        tags$iframe(
+          width = "800",
+          height = "450",
+          src = "https://www.youtube.com/embed/6eaTBoqpNEg",
+          frameborder = "0",
+          allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+          allowfullscreen = TRUE
+        )
+      ),
+      
+      br(), br(),
+      
+      # --- Introduction Text ---
+      tags$h2("Lemurs of Madagascar"),
+      tags$p("Madagascar is renowned for its lemurs—unique primates that look like a blend of cat, squirrel, and dog. 
+              Found nowhere else on Earth, these animals display remarkable behaviors, from the whale-like calls of the 
+              indri to the elegant, dance-like leaps of the sifaka. The sections below introduce their origins, 
+              behavior, and conservation."),
+      
+      tags$h3("Evolutionary Background"),
+      tags$p("Unlike other parts of the world, Madagascar lacks the dominant primate group known as the Haplorhini, 
+              which includes monkeys, apes, and humans. Instead, this ecological space is occupied by lemurs, members 
+              of the more ancient Strepsirhini lineage, which also includes lorises, bush babies, and pottos. These early 
+              primates were generally small, nocturnal, insect-eating animals with large eyes and long snouts. Madagascar’s 
+              long geographic isolation allowed lemurs to survive and evolve relatively undisturbed."),
+      
+      tags$p("About 160 million years ago, Madagascar was still attached to Africa as part of the supercontinent 
+              Gondwanaland. When the landmass split, Madagascar drifted eastward and became isolated. The first lemur-like 
+              primates arose in Africa around 60 million years ago and eventually reached Madagascar. Later, when monkeys 
+              emerged roughly 17–23 million years ago, the island was already cut off, preventing monkeys from ever arriving. 
+              Because monkeys were more adaptable and social, they outcompeted lemur relatives almost everywhere 
+              else—except on Madagascar."),
+      
+      tags$p("Freed from such competition, lemurs diversified extensively, adapting to a wide range of habitats with few 
+              large predators. They eventually developed many traits similar to monkeys, including social living, daytime 
+              activity, and plant-based diets."),
+      
+      tags$p("Humans arrived much later, about 2,000 years ago, bringing dramatic ecological change. Their presence led to 
+              the extinction of at least 15 lemur species, including giants as large as modern gorillas. Today, the largest 
+              living lemur—the indri—is tiny in comparison. Nearly all species now face extinction, primarily due to 
+              deforestation and hunting."),
+      
+      tags$h3("Social Behavior"),
+      tags$p("Lemur societies vary greatly across species. Ring-tailed lemurs (Lemur catta) form large, female-led groups 
+              of up to 30 members, where females have priority access to resources. In contrast, species like the aye-aye 
+              (Daubentonia madagascariensis) are mostly solitary and meet only to reproduce. Generally, diurnal species form 
+              more complex social groups, while nocturnal species tend to live alone or in small units. Grooming plays a 
+              critical role in strengthening social bonds and maintaining hygiene."),
+      
+      tags$h3("Diet and Feeding Strategies"),
+      tags$p("Lemur diets shift according to species and seasonal food availability. Many rely heavily on fruit, but most 
+              are flexible omnivores that eat leaves, flowers, seeds, nectar, and insects. Bamboo lemurs (Hapalemur spp.) 
+              specialize in eating bamboo that contains cyanide levels lethal to most animals. The aye-aye, using its 
+              elongated middle finger, extracts insect larvae from wood, filling a niche similar to a woodpecker."),
+      
+      tags$h3("Predators and Threats"),
+      tags$p("Natural predators include the fossa (Cryptoprocta ferox), a tree-climbing carnivore, and several large birds 
+              of prey like the Madagascar harrier-hawk. However, the most significant threats come from humans. Widespread 
+              habitat loss, fragmentation, and hunting have caused severe population declines. Today, over 95% of lemur species 
+              are listed as endangered or critically endangered."),
+      
+      tags$h3("Conservation Efforts"),
+      tags$p("Because lemurs are found only in Madagascar and play key ecological roles, they are central to conservation 
+              initiatives. Protected areas such as Ranomafana, Andasibe-Mantadia, and Masoala National Parks provide essential 
+              habitat. Conservation groups are also working to restore forests, reduce poaching, support sustainable community 
+              practices, and expand ecotourism. Zoos worldwide maintain breeding programs for select species, though long-term 
+              survival still depends on protecting Madagascar’s forests."),
+      
+      tags$h3("Why Madagascar’s Lemurs Matter Globally"),
+      tags$p("Despite being just one of many countries with native primates, Madagascar contains an exceptionally large share 
+              of primate diversity. As noted by primatologist Russell Mittermeier, the island shelters 21% of all primate genera 
+              (14 of 65) and 36% of primate families (5 of 14)—the highest concentration worldwide."),
+      
+      tags$p("Because of this, Madagascar is recognized as a distinct fourth biogeographic region for primate study, separate 
+              from the usual three: the Americas, Asia, and mainland Africa. Lemurs represent an ancient lineage that has 
+              endured environmental change and human pressure for millions of years."),
+      
+      tags$p("Protecting lemurs is essential not only for preserving Madagascar’s natural heritage but also for advancing 
+              scientific knowledge about primate behavior, evolution, and ecology. Lemurs play vital roles in seed dispersal, 
+              pollination, and forest renewal, making their conservation a global priority.")
+    ),
+    
+    tabPanel(
+      "Endangered Species",
+      br(),
+      
+      tags$h2("Threats to Madagascar’s Lemurs"),
+      
+      tags$p("Madagascar, located off the southeastern coast of Africa, contains extraordinary biological richness, 
+          with an estimated 12,000 plant species and 700 vertebrate species, of which 80–90% occur nowhere else on Earth. 
+          After being geographically isolated for approximately 88 million years, and spanning an area comparable to the 
+          northeastern United States, the island has become one of the most significant biodiversity hotspots globally. 
+          While species diversity is high across the island, the biodiversity of its tropical forests is particularly remarkable."),
+      
+      tags$p("Despite this ecological importance, Madagascar’s forests—much like tropical forests worldwide—are experiencing 
+          rapid degradation. Fragmentation, unsustainable harvesting of timber and forest products, over-hunting, invasive 
+          species, pollution, and climate change have all contributed to declines in native species. Although climate change 
+          is often emphasized because of its widespread impacts, recent research indicates that, in Madagascar, it is not the 
+          primary factor driving current species losses. Instead, human-induced habitat destruction plays the dominant role."),
+      
+      tags$h3("Forest Loss and Its Consequences"),
+      
+      tags$p("Nearly 44% of Madagascar’s forests have disappeared in the past six decades, largely due to slash-and-burn 
+          agriculture (locally known as tavy) and charcoal production. The pace and extent of habitat loss and fragmentation 
+          have been severe. Almost half of all remaining forest now lies within 100 meters (approximately 300 feet) of a 
+          non-forested edge, exposing wildlife to ongoing disturbance and reducing ecosystem integrity. Illegal hunting and 
+          the capture of wildlife for the pet trade further exacerbate biodiversity decline."),
+      
+      tags$p("As a result, Madagascar’s fauna faces extreme conservation pressure. According to the International Union for 
+          Conservation of Nature (IUCN), 95% of lemur species—including some of the most iconic primates—are currently 
+          threatened with extinction. Madagascar’s biodiversity crisis has intensified over the last decade."),
+      
+      # ---- Video BEFORE the Impact on Ruffed Lemurs section ----
+      tags$div(
+        style = "text-align: center; margin-top: 25px; margin-bottom: 25px;",
+        tags$iframe(
+          width = "800",
+          height = "450",
+          src = "https://www.youtube.com/embed/TxUPMzI14WY?start=19",
+          frameborder = "0",
+          allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+          allowfullscreen = TRUE
+        )
+      ),
+      
+      tags$h3("Impact on Ruffed Lemurs"),
+      
+      tags$p("Two recent scientific studies have examined how human activities influence ruffed lemurs, a group of critically 
+          endangered primates that play a key ecological role as major seed dispersers and indicators of rainforest health. 
+          Modeling that incorporated a range of climate and deforestation scenarios suggests that suitable habitat for the 
+          two ruffed lemur species could decline by up to 93% over the next century. Under unchecked deforestation, nearly 
+          all remaining eastern rainforest habitat could disappear, effectively eliminating ruffed lemur populations. The 
+          analyses demonstrate that habitat loss is likely to have more immediate and severe impacts on these species than 
+          climate change."),
+      
+      tags$p("However, projections also indicate that if protected areas maintain their current forest cover, the decline in 
+          suitable habitat could be reduced to approximately 62%, highlighting the importance of safeguarding and improving 
+          the integrity of existing reserves."),
+      
+      tags$p("A separate genetic study published in late 2019 examined how landscape features affect ruffed lemur gene flow—a 
+          crucial process that maintains genetic diversity and supports population resilience. The study assessed both 
+          natural barriers and human-caused constraints on movement, including rivers, elevation changes, roads, habitat 
+          quality, and human population density. Human activity emerged as the strongest predictor of reduced genetic 
+          exchange, with deforestation near human settlements forming significant barriers to movement and dispersal."),
+      
+      tags$p("Collectively, the evidence demonstrates that deforestation represents an urgent and direct threat to ruffed lemur 
+          survival, surpassing the short-term impacts of climate change. This threat extends beyond lemurs; many 
+          forest-dependent plants and animals face similar risks. Globally, over one-third (approximately 36.5%) of plant 
+          species are extremely rare and disproportionately vulnerable to human land use. Regions with the highest 
+          concentration of rare species often coincide with areas experiencing the greatest human disturbance."),
+      
+      tags$h3("Opportunities for Conservation Action"),
+      
+      tags$p("Madagascar’s natural heritage stands at a critical juncture. Strengthening protected areas, expanding 
+          reforestation initiatives, and improving forest management remain essential strategies for mitigating habitat 
+          loss while broader efforts address global climate change. Several nonprofit organizations are actively engaged in 
+          these efforts. For example, the Madagascar Biodiversity Partnership, in collaboration with the Arbor Day 
+          Foundation’s Plant Madagascar project, has planted nearly three million trees in the Kianjavato region—identified 
+          as a priority zone for ruffed lemur conservation. The Centre ValBio, based near Ranomafana National Park, is also 
+          conducting extensive reforestation work to support local ecosystems."),
+      
+      tags$p("At the policy level, Madagascar’s president, Andry Rajoelina, announced an initiative to reforest 40,000 hectares 
+          (99,000 acres) annually for five consecutive years, a scale equivalent to approximately 75,000 football fields. 
+          While the pledge is promising, the plan currently lacks detailed implementation strategies."),
+      
+      tags$p("Spatial projections from recent studies identify areas where habitat is likely to persist, as well as regions 
+          facing high risk of near-complete habitat loss or genetic isolation for ruffed lemurs. Because lemur presence 
+          strongly correlates with overall biodiversity, protecting lemur habitats will also safeguard broader ecological 
+          communities. These research findings provide a roadmap for prioritizing conservation interventions to preserve 
+          Madagascar’s exceptionally rich but increasingly threatened biodiversity.")
+    ),
+    
+    tabPanel(
+      "Characteristics",
+      br(),
+      
+      # ---- Section 1: Dictionary ----
+      tags$h2("Dictionary"),
+      tags$p(
+        "Use this table to look up the genus and family for any lemur common name.",
+        style = "font-size: 18px; margin-top: 5px; margin-bottom: 10px;"
+      ),
+      
+      tags$label(
+        "Choose a common name:",
+        style = "font-size: 14px; font-weight: bold;"
+      ),
+      br(),
+      
+      selectInput(
+        inputId = "dict_common",
+        label   = NULL,
+        choices = sort(unique(lemurs_imputed$Common_Name)),
+        selected = sort(unique(lemurs_imputed$Common_Name))[1]
+      ),
+      
+      tableOutput("dict_table"),
+      
+      hr(),
+      
+      # ---- Section 2: Distribution of Body Mass by Species ----
+      tags$h2("Distribution of Body Mass by Species"),
+      tags$p(
+        "To explore the distribution of body mass for a particular species, please choose a species from the dropdown menu below.",
+        style = "font-size: 18px; margin-top: 5px; margin-bottom: 10px;"
+      ),
+      
+      tags$label(
+        "Choose a species:",
+        style = "font-size: 14px; font-weight: bold;"
+      ),
+      br(),
+      
+      selectInput(
+        inputId = "bm_species",
+        label   = NULL,
+        choices = sort(unique(lemurs_imputed$Genus_Species)),
+        selected = sort(unique(lemurs_imputed$Genus_Species))[1]
+      ),
+      
+      plotOutput("bm_hist", height = "400px")
+    ),
+    
+    tabPanel(
+      "Map of Distribution",
+      br(),
+      
+      tags$h2("Map of Lemur Distribution"),
+      tags$p(
+        "This map illustrates the geographic distribution of lemur species across Madagascar. 
+     Each bubble represents a specific observation site, and the size of the bubble reflects 
+     the number of individuals recorded at that location. By exploring this map, you can 
+     identify where each species resides, compare population sizes across regions, and view 
+     additional ecological information such as locality names and elevation. This visualization 
+     highlights Madagascar’s remarkable biodiversity and the unique habitats that support 
+     different lemur species.",
+        style = "font-size: 18px; margin-bottom: 15px;"
+      ),
+      
+      leafletOutput("lemur_map", height = "650px")
+    )
+  )
+)
+```
+
+#### Step 6: Build webpage - Server
+
+```{r, warning=FALSE, message=FALSE}
+## ---------- SERVER ----------
+
+server <- function(input, output, session) {
+  
+  output$lemur_map <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("Esri.WorldImagery") %>%
+      addProviderTiles("CartoDB.PositronOnlyLabels") %>%
+      addPolygons(
+        data   = madagascar,
+        weight = 1,
+        color  = "grey40",
+        fillColor = "transparent"
+      ) %>%
+      addCircleMarkers(
+        data = lemurs_counts_sf,
+        radius = ~2 + n_individuals,
+        stroke = FALSE,
+        fillOpacity = 0.8,
+        color = ~pal(Genus_Species),
+        popup = ~paste0(
+          "<b>Species:</b> ", Genus_Species, "<br>",
+          "<b>Individuals at this site:</b> ", n_individuals, "<br>",
+          "<b>Site:</b> ", Site_Name, "<br>",
+          "<b>Locality:</b> ", Locality, "<br>",
+          "<b>Elevation:</b> ", Elevation
+        ),
+        label = ~paste0(Genus_Species, " (n = ", n_individuals, ")")
+      ) %>%
+      addLegend(
+        "bottomright",
+        pal = pal,
+        values = lemurs_counts_sf$Genus_Species,
+        title = "Species",
+        opacity = 1
+      )
+  })
+  
+# ---- Dictionary table ----
+  output$dict_table <- renderTable({
+    req(input$dict_common)
+    
+    lemurs_imputed %>%
+      filter(Common_Name == input$dict_common) %>%
+      select(Common_Name, Genus_Species, Family) %>%
+      distinct() %>%
+      arrange(Genus_Species)
+  })
+  
+  # ---- Body-mass histogram ----
+  output$bm_hist <- renderPlot({
+    req(input$bm_species)
+    
+    df <- lemurs_imputed %>%
+      filter(Genus_Species == input$bm_species, !is.na(Body_Mass))
+    
+    hist(
+      df$Body_Mass,
+      main = paste("Body Mass Distribution for", input$bm_species),
+      xlab = "Body mass (kg)",
+      col  = "lightblue",
+      border = "white"
+    )
+  })
+  
+}
+```
+
+#### Step 7: Run app.R
+
+The command `shinyApp(ui = ui, server = server)` launches the Shiny application by combining the user-interface layout (`ui`) with the server logic (`server`), allowing all interactive features, visualizations, and outputs defined in the code to run as a fully functioning web app.
+
+```{r, warning=FALSE, message=FALSE, eval = FALSE, include=TRUE}
+## ---------- RUN APP ----------
+
+shinyApp(ui = ui, server = server)
+```
+
+#### Step 8: Conclusion
+
+In conclusion, effective protection of Madagascar’s lemurs depends on conserving their forest habitats and strengthening the capacity of local communities to safeguard both wildlife and natural resources. A key strategy involves working collaboratively with communities living near critical lemur areas, such as the Amoron’i Onilahy Protected Area, by training local forest patrols (polisin’ala) to monitor lemur populations, document habitat conditions, detect illegal activities, and help enforce protections. These community-based patrols, equipped with modern tools like smartphone reporting systems, have contributed to reduced deforestation and increasing lemur numbers in targeted zones. Education and outreach are also essential. Together, these approaches demonstrate that protecting lemurs requires not only habitat conservation, but also community engagement, environmental education, and economic support that align human well-being with long-term biodiversity protection.
+
+#### Step 9: Click this icon to visit to the webpage
+
+<p style="text-align: center;">
+
+<a href="https://khang-trangjamieson.shinyapps.io/Final-project-MA615-Lemurs-Madagascar/" target="_blank"> <img src="lemur_icon.png" alt="Open Lemur App" width="80"/><br> [Open Lemur App]{style="font-weight: bold;"} </a>
+
+</p>
+
+#### Step 10: Reference
+
+<https://pandoradata.earth/dataset/isomad-modern-biological-material>
+
+<https://www.wildmadagascar.org/wildlife/lemurs.php>
+
+<https://leakeyfoundation.org/lemurs-are-the-worlds-most-endangered-mammals-but-planting-trees-can-help-save-them/>
