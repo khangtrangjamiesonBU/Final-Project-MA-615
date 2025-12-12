@@ -26,6 +26,10 @@ The project includes the following key files:
 
 - supplementary-table-s1-3.csv: The dataset used for this project.
 
+- lemur_icon.png: The icon used in the HTML report to link to the webpage. At the end of the report, please click the Lemur icon to access the webpage.
+
+- README.md file: Provides explanations and instructions on how to use the uploaded files and folders.
+
 **Project Folders**
 
 The repository also contains two folders:
