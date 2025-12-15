@@ -17,6 +17,8 @@ This repository contains the final project for MA 615. The objectives of this pr
 The project includes the following key files:
 
 - Final-project.Rproj: Used to open and manage the project in RStudio.
+  
+- Final-report-pdf.pdf: PDF version of the report
 
 - Final-report-MA615.html: The final project report rendered in HTML format.
 
